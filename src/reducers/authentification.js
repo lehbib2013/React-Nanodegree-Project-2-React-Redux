@@ -11,6 +11,7 @@ export default function authentification(state = {"authedUser":null,}, action) {
       return {
         ...state,
         "authedUser": null,
+       
         };
     default:
       return state;

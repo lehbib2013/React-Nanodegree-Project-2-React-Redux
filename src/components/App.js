@@ -9,43 +9,51 @@ import QuestionPreview from "./QuestionPreview"
 import Menu from "./Menu";
 import Login from "../components/authentification/Login"
 import Box from '@mui/material/Box';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate} from "react-router-dom";
+
 //import users from "../reducers/users";
 //import questions from "../reducers/questions";
-
+import Notfound from "./Notfound";
+import ProtectedPath from "./ProtectedPath";
 const App = ({ isAuthenticated,dispatch,updateCompleted  }) => {
-
+  
+  const navigate = useNavigate();
+  const redirectUrl = window.location.href.toString().split(window.location.host)[1];
   useEffect(() => {
     console.log(isAuthenticated);
     if (!isAuthenticated) {
-        return;
+      return (<Login />);
     }
   console.log("handling data ....")
     dispatch(handleInitialData());
 }, [isAuthenticated, dispatch]);
 
-if (!isAuthenticated) {
+ if (!isAuthenticated) {
     return (<Login />);
-}
+} 
 
-
+/** Idea of ProtectedPath logic is inspired from https://www.makeuseof.com/create-protected-route-in-react/ */
  
   return (
     <Fragment>
       <LoadingBar />
     
       <Box sx={{ flexGrow: 1,backgroundColor:"rose" }}>
-        {updateCompleted && isAuthenticated  ?  (<div>
+      {updateCompleted && isAuthenticated  &&  (<div>
           <Menu />
-          <Routes>
-            <Route path="/" exact element={<UserHome />} />
-            <Route path="/add" element={<NewQuestion />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/questions/:id" element={<QuestionPreview />} />
-            
-          </Routes>
+         
           </div>
-        ):null}
+        )}
+      <Routes>
+            <Route path="/login"  element={<Login />} />
+            <Route path="/notfound"  element={<Notfound />} />
+            <Route path="/" exact element={<ProtectedPath><UserHome /></ProtectedPath>} />
+            <Route path="/add" element={<ProtectedPath><NewQuestion /></ProtectedPath>} /> 
+            <Route path="/leaderboard" element={<ProtectedPath><Leaderboard /></ProtectedPath>} />
+            <Route path="/questions/:id" element={<ProtectedPath><QuestionPreview /></ProtectedPath>} />
+            <Route path="*" element={<ProtectedPath><UserHome /></ProtectedPath>} />
+      </Routes>
+       
        
         </Box>
     

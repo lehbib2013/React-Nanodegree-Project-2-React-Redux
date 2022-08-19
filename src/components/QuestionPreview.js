@@ -2,10 +2,10 @@ import { PeopleOutlineTwoTone } from '@mui/icons-material';
 import Chip from '@mui/material/Chip';
 
 import FaceIcon from '@mui/icons-material/Face';
-
+import { useEffect, Fragment } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {connect} from 'react-redux';
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation,useNavigate, useParams } from "react-router-dom";
 import Box, { BoxProps } from '@mui/material/Box';
 import { Button } from '@mui/material';
 import { handleSaveAnswer } from '../actions/questions';
@@ -13,7 +13,7 @@ import Card from '@mui/material/Card';
 import { createSvgIcon } from '@mui/material/utils';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
+import Avatar from '@mui/material/Avatar';  
 import * as React from 'react';
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
@@ -47,6 +47,13 @@ const vote = (e) => {
 const goToHome = () => {
                 navigate('/');  
                        }
+useEffect(() => {
+  if (props.nonExistedPath === true) {
+    navigate('/notfound');
+                 }
+                    }, []);
+
+                  
   return (
           <Box  height="100vh" 
           sx={{
@@ -81,14 +88,20 @@ const goToHome = () => {
           <Box sx={{ display: 'flex-inline', flexDirection:'column',alignItems:'center', justifyContent:'center',gridArea: 'option1', bgcolor: 'error.main',border:1  }}>{props.optionA} <Badge badgeContent={props.percentageA+'%'} color="primary">
             <MailIcon color="action" />
           </Badge>
-          <Box sx={{ bgcolor: 'text.disabled',width:'100px' }}><Button onClick={()=>{vote({authedUser:props.currentUser,qid:props.qId, option:'optionOne'})}}>Click</Button></Box>  {props.votedForA?"The current user had voted voted for this option":"" } 
+          <Box sx={{ bgcolor: 'text.disabled',width:'100px' }}>
+          {(!props.votedForA && !props.votedForB)?(<Button onClick={()=>{vote({authedUser:props.currentUser,qid:props.qId, option:'optionOne'})}}>Click</Button>):''} 
+            
+            </Box>  {props.votedForA?"The current user had voted voted for this option":"" } 
           <Chip icon={<FaceIcon />} label={props.votesForA +' users'} variant="outlined" />
           </Box>
           <Box sx={{ display: 'flex-inline', flexDirection:'column',alignItems:'center',justifyContent:'center',gridArea: 'option2', bgcolor: 'warning.dark',border:1  }}>{props.optionB} 
           <Badge badgeContent={props.percentageB+'%'} color="primary">
             <MailIcon color="action" />
           </Badge>
-           <Box sx={{ bgcolor: 'text.disabled',width:'100px' }}><Button onClick={()=>{vote({authedUser:props.currentUser,qid:props.qId, option:'optionTwo'})}}>Click</Button></Box> {props.votedForB?"The current user had voted voted for this option":"" } 
+           <Box sx={{ bgcolor: 'text.disabled',width:'100px' }}>
+           {(!props.votedForA && !props.votedForB)?(<Button onClick={()=>{vote({authedUser:props.currentUser,qid:props.qId, option:'optionTwo'})}}>Click</Button>):''} 
+            
+            </Box> {props.votedForB?"The current user had voted voted for this option":"" } 
            <Chip icon={<FaceIcon />} label={props.votesForB+' users'} variant="outlined" />
            </Box>
          </Box>
@@ -96,29 +109,58 @@ const goToHome = () => {
 }
 
 const mapStateToProps = ({ authentification, users, questions }, props) => {
+  let author ;
+  let optionA ;
+  let optionB ;
+  let votedForA ;
+  let votedForB ;
+  let votesForA ;
+  let votesForB ;
+  let nbrUsers;
+  let percentageA;
+  let percentageB ;
+  let  nonExistedPath; 
   const { id } = props.router.params;
-  const user = users[authentification.authedUser.username];
+  let user = users[authentification.authedUser.username];
+  let currentQuestion = questions[id];
   console.log(id);
+  console.log("currentQuestion");
+  console.log(currentQuestion);
+  console.log("user ...");
+  console.log(user);
+    if (currentQuestion == undefined) 
+      {nonExistedPath = true; console.log("curremmmmm");
+    
+    }
+  
+  else {
+    nonExistedPath = false;
+ 
 
-  const author = questions[id].author;
-  const optionA = questions[id].optionOne.text;
-  const optionB = questions[id].optionTwo.text;
-  const votedForA = questions[id].optionOne.votes.includes(authentification.authedUser.username);
-  const votedForB = questions[id].optionTwo.votes.includes(authentification.authedUser.username);
-  const votesForA = questions[id].optionOne.votes.length;
-  const votesForB = questions[id].optionTwo.votes.length;
-  const nbrUsers =Object.keys(users).length;
-  const percentageA = (votesForA/nbrUsers)*100;
-  const percentageB = (votesForB/nbrUsers)*100;
-  console.log("voted A...");
-  console.log(votedForA);
-  console.log("voted B...");
-  console.log(votedForB);
+
+    //user = users[authentification.authedUser.username];
+    author = questions[id].author;
+    optionA = questions[id].optionOne.text;
+    optionB = questions[id].optionTwo.text;
+     votedForA = questions[id].optionOne.votes.includes(authentification.authedUser.username);
+     votedForB = questions[id].optionTwo.votes.includes(authentification.authedUser.username);
+    votesForA = questions[id].optionOne.votes.length;
+    votesForB = questions[id].optionTwo.votes.length;
+    nbrUsers =Object.keys(users).length;
+    percentageA = (votesForA/nbrUsers)*100;
+    percentageB = (votesForB/nbrUsers)*100;
+    console.log("voted A...");
+    console.log(votedForA);
+    console.log("voted B...");
+    console.log(votedForB);
+    
+     
+  }
   return {
     currentUser:authentification.authedUser.username,
     author,
     qId:id,
-    avatar:user.avatarURL,
+    avatar:user?user.avatarURL:null,
     optionA,
     optionB,
     votedForA,
@@ -127,7 +169,9 @@ const mapStateToProps = ({ authentification, users, questions }, props) => {
     votesForB,
     percentageA,
     percentageB,
+    nonExistedPath,
   };
+ 
 };
 
 export default withRouter(connect(mapStateToProps)(QuestionPreview));

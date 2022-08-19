@@ -16,8 +16,9 @@ const mapStateToProps = ({ users }) => {
   const usersArr = Object.values(users).filter(q=>q.hasOwnProperty("id"));
   console.log("usersArr");
   console.log(usersArr);
+ 
   const usersK = usersArr.sort(
-    (a, b) => a.id - b.id  
+    (a, b) =>   (Object.keys(b.answers).length +Object.keys(b.questions).length) - (Object.keys(a.answers).length +Object.keys(a.questions).length)
         );
     console.log("jjjj...");
     console.log(usersK);

@@ -11,5 +11,6 @@ export function login(userInfo) {
 export function logout() {
   return {
     type: LOG_OUT,
+    
    };
 }

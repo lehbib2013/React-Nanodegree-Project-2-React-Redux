@@ -48,7 +48,7 @@ const mapStateToProps = ({  users,  }, { id }) => {
     console.log("user current")
     console.log(user);
     const name = users[id].name;
-    const avatar = users[id].Avatar;
+    const avatar = users[id].avatarURL;
     
     const answered = Object.keys(user.answers).length;
     const created = Object.keys(user.questions).length;

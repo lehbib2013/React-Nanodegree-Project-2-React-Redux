@@ -179,6 +179,40 @@ export function _saveQuestion (question) {
   })
 }
 
+export function _saveQuestionAnswer({ authedUser, qid, answer }) {
+  return new Promise((resolve, reject) => {
+    if (!authedUser || !qid || !answer) {
+      reject("Please provide authedUser, qid, and answer");
+    }
+
+    setTimeout(() => {
+       let arr = [];
+       arr.push({
+        ...users,
+        [authedUser]: {
+          ...users[authedUser],
+          answers: {
+            ...users[authedUser].answers,
+            [qid]: answer
+          }
+        }
+      });
+      arr.push({
+        ...questions,
+        [qid]: {
+          ...questions[qid],
+          [answer]: {
+            ...questions[qid][answer],
+            votes: questions[qid][answer].votes.concat([authedUser])
+          }
+        }
+      });
+      resolve(
+        arr
+      ) 
+    }, 500)
+  })
+}
 export function _saveQuestionAnswerU({ authedUser, qid, answer }) {
   return new Promise((resolve, reject) => {
     if (!authedUser || !qid || !answer) {

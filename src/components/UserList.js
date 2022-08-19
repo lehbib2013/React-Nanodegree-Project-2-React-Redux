@@ -9,8 +9,8 @@ const UserList = (props)=>{
       <div>
         
       {props.usersKeys.map((ukey) => (
-        <Box sx={{ border: 1,marginBottom:1, }}>
-          <UserSummary id={ukey} />
+        <Box key={ukey} sx={{ border: 1,marginBottom:1, }}>
+          <UserSummary key={ukey} id={ukey} />
         </Box>
            
         ))}

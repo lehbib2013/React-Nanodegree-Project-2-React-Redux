@@ -24,7 +24,6 @@ describe('Authentification test for authentification reducer', () => {
       console.log(authedUser);
      
       expect(authedUser).toEqual(null);
-      
-    
+     
   });
 });

@@ -1,17 +1,11 @@
-import { useEffect, Fragment,useState } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
-import { handleInitialData } from "../../actions/shared";
-import { login,logout } from "../../actions/authentification";
-import { signInAction } from "../../actions/shared";
-import Leaderboard from "../Leaderboard";
-import LoadingBar from "react-redux-loading-bar";
-import { Routes, Route } from "react-router-dom";
-import { useNavigate, Link } from "react-router-dom";
+import { login, } from "../../actions/authentification";
 import CardMedia from '@mui/material/CardMedia';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import { useNavigate } from "react-router-dom";
 
 const PaperStyled = styled(Box)(({ theme }) => ({
    
@@ -27,7 +21,14 @@ const Login = ({isAuthenticated,dispatch}) => {
 const navigate = useNavigate();   
 const [username,setUsername] = useState("");
 const [password,setPassword] = useState("");
-
+if (isAuthenticated) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlTo = urlParams.get('urlTo');
+ 
+ navigate(urlTo ? urlTo : "/");
+ 
+  
+}
 const signin = (e) => {
                         e.preventDefault();
                         dispatch(login({username, password}));
@@ -43,7 +44,7 @@ const handleChangeUsername =(e) => {
     setUsername(currvalue);
   };
 
-return (isAuthenticated?(()=>(navigate('/'))):(
+return (
     <Box sx={{ flexGrow: 1,backgroundColor:"rose" }}>
         <Grid container flex-direction="row" border="0px" width="100wv" height="100vh" justifyContent="center" alignItems="center">
         <Grid item xs={12}>
@@ -78,13 +79,14 @@ return (isAuthenticated?(()=>(navigate('/'))):(
     </Grid>
     </Grid>
     </Box>
-));
+);
 };
 
 const mapStateToProps = ({ authentification }) => {
   return {
     loading: authentification.authedUser === null,
     isAuthenticated:authentification.authedUser !== null,
+    
   }
  
 };

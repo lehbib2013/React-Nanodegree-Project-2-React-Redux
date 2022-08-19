@@ -22,7 +22,7 @@ const reduxRender = (ui, options) =>
 
 describe('test NewQuestions functionality', () => {
   it('will display an error if neither of options was clicked', () => {
-    //const dispatch = useDispatch();
+    
       store.dispatch(login({username:'lehbib', password:'fff'}));
       const component = reduxRender(<Router><NewQuestions /></Router>);
       
